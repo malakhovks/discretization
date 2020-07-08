@@ -17,7 +17,7 @@ RUN apt-get -y clean \
     # ------------------------------------------------------------------
     && pip install -r ./deploy/requirements.txt --src /usr/local/src \
     && mkdir -p /usr/share/man/man1 \
-    && apt-get -y install openjdk-8-jdk-headless \
+    && apt-get -y install openjdk-11-jdk-headless \
     && rm -r /root/.cache \
     && apt-get -y clean \
     && apt-get -y autoremove
