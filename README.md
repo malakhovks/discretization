@@ -1,5 +1,5 @@
 # confor-as-a-service
-**CONFOR** - tools for knowledge discovery, classification, diagnostics and prediction.
+**CONFOR** – tools for knowledge discovery, classification, diagnostics and prediction.
 
 The **CONFOR** system supports the most effective methods of intelligent data analysis.
 
