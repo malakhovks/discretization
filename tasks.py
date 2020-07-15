@@ -17,15 +17,16 @@ def confor_task(args):
         logging.debug('Data size in bytes: ' + str(len(args['body'])))
         projectDir = str(args['project_dir'])
         pathToConfor = os.path.join(projectDir, 'deploy', 'confor', 'Service3.jar')
-        destinationTempXlsx = "/".join([tempfile.mkdtemp(),'xlsxFile.xlsx'])
+        # destinationTempXlsx = "/".join([tempfile.mkdtemp(),'xlsxFile.xlsx'])
+        destinationTempXlsx = args['destination']
         destinationOutputXml = "/".join([tempfile.mkdtemp(),'output.xml'])
-        try:
-             with open(destinationTempXlsx, 'wb') as tempXlsx:
-                tempXlsx.write(args['body'])
-        except IOError as e:
-            logging.error(traceback.format_exc())
-            # logging.error(repr(e))
-            return uwsgi.SPOOL_IGNORE
+        # try:
+        #      with open(destinationTempXlsx, 'wb') as tempXlsx:
+        #         tempXlsx.write(args['body'])
+        # except IOError as e:
+        #     logging.error(traceback.format_exc())
+        #     # logging.error(repr(e))
+        #     return uwsgi.SPOOL_IGNORE
         args = ["java", '-jar', pathToConfor, destinationTempXlsx, destinationOutputXml]
         try:
             code = subprocess.call(args, stdout=subprocess.DEVNULL)
