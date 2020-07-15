@@ -14,7 +14,7 @@ def confor_task(args):
     try:
         logging.debug('Start task execution')
         # data size in bytes
-        logging.debug('Data size in bytes: ' + str(len(args['body'])))
+        # logging.debug('Data size in bytes: ' + str(len(args['body'])))
         projectDir = str(args['project_dir'])
         pathToConfor = os.path.join(projectDir, 'deploy', 'confor', 'Service3.jar')
         # destinationTempXlsx = "/".join([tempfile.mkdtemp(),'xlsxFile.xlsx'])
@@ -39,7 +39,7 @@ def confor_task(args):
             return abort(500)
         # copy output.xml file with results to unique folder with id
         try:
-            shutil.copy2(destinationOutputXml, '/var/tmp/tasks/confor/' + args['spooler_task_name'])
+            shutil.move(destinationOutputXml, '/var/tmp/tasks/confor/' + args['spooler_task_name'])
         except Exception as e:
             logging.error(traceback.format_exc())
             # logging.error(repr(e))
