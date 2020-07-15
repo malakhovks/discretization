@@ -99,10 +99,10 @@ def queued_find():
             except IOError as e:
                 logging.error(e, exc_info=True)
                 return abort(500)
-            toTask = confor_task.spool(project_dir = projectDir.encode(), filename = xlsxFileName.encode(), body = xlsxFileBinary.getvalue())
+            toTask = confor_task.spool(project_dir = projectDir.encode(), filename = xlsxFileName.encode(), body = xlsxFileBinary)
             toTask = toTask.decode('utf-8', errors='ignore')
             toTask = toTask.rpartition('/')[2]
-            return jsonify({'task': { 'status': 'queued', 'parameters': {'mode':'find', 'encoding': 'Windows-1251'}, 'file': xlsxFileName, 'id': resp}}), 202
+            return jsonify({'task': { 'status': 'queued', 'parameters': {'mode':'find', 'encoding': 'Windows-1251'}, 'file': xlsxFileName, 'id': toTask}}), 202
     else:
         return jsonify({'file': { 'filename': 'not allowed'}}), 400
 
