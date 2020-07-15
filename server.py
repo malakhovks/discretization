@@ -94,7 +94,7 @@ def queued_find():
             file.save(destination)
             file.close()
             try:
-                with open(destination,'rb') as xlsxFile:
+                with open(destination,'rb', encoding='cp1251', errors='ignore') as xlsxFile:
                     xlsxFileBinary = xlsxFile.read()
             except IOError as e:
                 logging.error(e, exc_info=True)
