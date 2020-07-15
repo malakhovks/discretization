@@ -20,7 +20,7 @@ def confor_task(args):
         destinationTempXlsx = "/".join([tempfile.mkdtemp(),'xlsxFile.xlsx'])
         destinationOutputXml = "/".join([tempfile.mkdtemp(),'output.xml'])
         try:
-             with open(destinationTempXlsx, 'w', encoding='cp1251', errors='ignore') as tempXlsx:
+             with open(destinationTempXlsx, 'wb') as tempXlsx:
                 tempXlsx.write(args['body'])
         except IOError as e:
             logging.error(traceback.format_exc())
