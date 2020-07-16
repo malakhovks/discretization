@@ -93,13 +93,6 @@ def queued_find():
             destination = "/".join([tempfile.mkdtemp(),xlsxFile])
             file.save(destination)
             file.close()
-            # try:
-            #     with open(destination,'rb') as xlsxFile:
-            #         xlsxFileBinary = xlsxFile.read()
-            # except IOError as e:
-            #     logging.error(e, exc_info=True)
-            #     return abort(500)
-            # toTask = confor_task.spool(project_dir = projectDir.encode(), filename = xlsxFileName.encode(), body = xlsxFileBinary)
             toTask = confor_task.spool(project_dir = projectDir.encode(), filename = xlsxFileName.encode(), destination = destination)
             toTask = toTask.decode('utf-8', errors='ignore')
             toTask = toTask.rpartition('/')[2]
