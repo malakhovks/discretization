@@ -64,7 +64,7 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    return 'Hello, CONFOR!'
+    return Response(render_template('index.html'), mimetype='text/html')
 
 """
 # API ---------------------------------------------------------------------------------------------------
