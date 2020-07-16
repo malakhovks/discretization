@@ -13,20 +13,11 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 def confor_task(args):
     try:
         logging.debug('Start task execution')
-        # data size in bytes
-        # logging.debug('Data size in bytes: ' + str(len(args['body'])))
         projectDir = str(args['project_dir'])
         pathToConfor = os.path.join(projectDir, 'deploy', 'confor', 'Service3.jar')
-        # destinationTempXlsx = "/".join([tempfile.mkdtemp(),'xlsxFile.xlsx'])
         destinationTempXlsx = args['destination']
         destinationOutputXml = "/".join([tempfile.mkdtemp(),'output.xml'])
-        # try:
-        #      with open(destinationTempXlsx, 'wb') as tempXlsx:
-        #         tempXlsx.write(args['body'])
-        # except IOError as e:
-        #     logging.error(traceback.format_exc())
-        #     # logging.error(repr(e))
-        #     return uwsgi.SPOOL_IGNORE
+        destinationTaskResultFolder = '/var/tmp/tasks/confor/' + args['spooler_task_name']
         args = ["java", '-jar', pathToConfor, destinationTempXlsx, destinationOutputXml]
         try:
             code = subprocess.call(args, stdout=subprocess.DEVNULL)
@@ -37,9 +28,15 @@ def confor_task(args):
         except OSError as e:
             logging.error(e, exc_info=True)
             return abort(500)
+        if not os.path.exists(destinationTaskResultFolder):
+            try:
+                os.makedirs(destinationTaskResultFolder, 0o755)
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
         # copy output.xml file with results to unique folder with id
         try:
-            shutil.move(destinationOutputXml, '/var/tmp/tasks/confor/' + str(args['spooler_task_name']))
+            shutil.move(destinationOutputXml, destinationTaskResultFolder)
         except Exception as e:
             logging.error(traceback.format_exc())
             # logging.error(repr(e))

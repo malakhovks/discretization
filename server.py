@@ -18,7 +18,7 @@ import re, string
 # from io import StringIO, BytesIO
 
 # load libraries for API proccessing
-from flask import Flask, jsonify, flash, request, Response, redirect, url_for, abort, render_template
+from flask import Flask, jsonify, flash, request, Response, redirect, url_for, abort, render_template, send_file, safe_join
 
 # A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 from flask_cors import CORS
@@ -112,7 +112,7 @@ def check_find_status():
     taskID = request.args.get('id')
     if not os.path.exists('/var/tmp/tasks/confor/' + taskID):
         return jsonify({'task': {'id': taskID, 'status': False}}), 204
-    if os.path.exists('/var/tmp/tasks/confor/' + task_id):
+    if os.path.exists('/var/tmp/tasks/confor/' + taskID):
         return jsonify({'task': {'id': taskID, 'status': True}}), 200
 
 @app.route('/api/confor/file/task/output')
@@ -121,7 +121,7 @@ def get_output_xml():
     if not os.path.exists('/var/tmp/tasks/confor/' + taskID):
         return jsonify({'task': taskID, 'status': False}), 204
     if not os.path.isfile('/var/tmp/tasks/confor/' + taskID + '/output.xml'):
-        return jsonify({'task': task_id, 'status': False}), 204
+        return jsonify({'task': taskID, 'status': False}), 204
 
     try:
         safe_path = safe_join('/var/tmp/tasks/confor/' + taskID, 'output.xml')
