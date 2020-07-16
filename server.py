@@ -70,8 +70,8 @@ def index():
 # API ---------------------------------------------------------------------------------------------------
 # """
 
-@app.route('/api/confor/file/find', methods=['POST'])
-def queued_find():
+@app.route('/api/confor/service3', methods=['POST'])
+def queued_service_3():
     # check if the post request has the file part
     if 'file' not in request.files:
         flash('No file part')
@@ -100,7 +100,7 @@ def queued_find():
     else:
         return jsonify({'file': { 'filename': 'not allowed'}}), 400
 
-@app.route('/api/confor/file/find/status')
+@app.route('/api/confor/status')
 def check_find_status():
     taskID = request.args.get('id')
     if not os.path.exists('/var/tmp/tasks/confor/' + taskID):
@@ -108,7 +108,7 @@ def check_find_status():
     if os.path.exists('/var/tmp/tasks/confor/' + taskID):
         return jsonify({'task': {'id': taskID, 'status': True}}), 200
 
-@app.route('/api/confor/file/task/output')
+@app.route('/api/confor/task/output')
 def get_output_xml():
     taskID = request.args.get('id')
     if not os.path.exists('/var/tmp/tasks/confor/' + taskID):
@@ -122,10 +122,6 @@ def get_output_xml():
     except Exception as e:
         logging.error(e, exc_info=True)
         return abort(500)
-
-@app.route('/api/confor/file/nofind', methods=['POST'])
-def noFind():
-    return 'Hello, CONFOR!'
 
 if __name__ == '__main__':
     # default port = 5000
