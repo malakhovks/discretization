@@ -39,7 +39,7 @@ def confor_task(args):
             return abort(500)
         # copy output.xml file with results to unique folder with id
         try:
-            shutil.move(destinationOutputXml, '/var/tmp/tasks/confor/' + args['spooler_task_name'])
+            shutil.move(destinationOutputXml, '/var/tmp/tasks/confor/' + str(args['spooler_task_name']))
         except Exception as e:
             logging.error(traceback.format_exc())
             # logging.error(repr(e))
