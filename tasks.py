@@ -10,7 +10,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.ERROR)
 
 @spool
-def confor_task(args):
+def confor_service_3(args):
     try:
         logging.debug('Start task execution')
         projectDir = str(args['project_dir'])
@@ -18,7 +18,11 @@ def confor_task(args):
         destinationTempXlsx = args['destination']
         destinationOutputXml = "/".join([tempfile.mkdtemp(),'output.xml'])
         destinationTaskResultFolder = '/var/tmp/tasks/confor/' + args['spooler_task_name']
-        args = ["java", '-jar', pathToConfor, destinationTempXlsx, destinationOutputXml]
+        if args['find'] == 'true':
+            args = ["java", '-jar', pathToConfor, destinationTempXlsx, 'Find$',destinationOutputXml]
+        else:
+            args = ["java", '-jar', pathToConfor, destinationTempXlsx, destinationOutputXml]
+        logging.debug('ARGS: ' + str(args))
         try:
             code = subprocess.call(args, stdout=subprocess.DEVNULL)
             if code == 0:

@@ -25,9 +25,9 @@ from flask_cors import CORS
 
 # for spooler
 import uwsgi
-from tasks import confor_task
+from tasks import confor_service_3
 
-ALLOWED_EXTENSIONS = set(['xlsx'])
+ALLOWED_EXTENSIONS = set(['xlsx', 'csv'])
 
 __author__ = "Kyrylo Malakhov <malakhovks@nas.gov.ua> and Vitalii Velychko <aduisukr@gmail.com>"
 __copyright__ = "Copyright (C) 2020 Kyrylo Malakhov <malakhovks@nas.gov.ua> and Vitalii Velychko <aduisukr@gmail.com>"
@@ -93,10 +93,10 @@ def queued_service_3():
             destination = "/".join([tempfile.mkdtemp(),xlsxFile])
             file.save(destination)
             file.close()
-            toTask = confor_task.spool(project_dir = projectDir.encode(), filename = xlsxFileName.encode(), destination = destination)
+            toTask = confor_service_3.spool(project_dir = projectDir.encode(), filename = xlsxFileName.encode(), find = request.args['find'], destination = destination)
             toTask = toTask.decode('utf-8', errors='ignore')
             toTask = toTask.rpartition('/')[2]
-            return jsonify({'task': { 'status': 'queued', 'parameters': {'mode':'find', 'encoding': 'Windows-1251'}, 'file': xlsxFileName, 'id': toTask}}), 202
+            return jsonify({'task': { 'status': 'queued', 'parameters': {'find': request.args['find'], 'encoding': 'utf-8', 'extension': 'xlsx'}, 'file': xlsxFileName, 'id': toTask}}), 202
     else:
         return jsonify({'file': { 'filename': 'not allowed'}}), 400
 
