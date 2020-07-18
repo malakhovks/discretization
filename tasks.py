@@ -18,9 +18,9 @@ def confor_service_3(args):
         destinationTempXlsx = args['destination']
         destinationOutputXml = "/".join([tempfile.mkdtemp(),'output.xml'])
         destinationTaskResultFolder = '/var/tmp/tasks/confor/' + args['spooler_task_name']
-        if args['find'] == 'true':
+        if args['find'] == 'find':
             args = ["java", '-jar', pathToConfor, destinationTempXlsx, 'Find$',destinationOutputXml]
-        else:
+        elif args['find'] == 'nofind':
             args = ["java", '-jar', pathToConfor, destinationTempXlsx, destinationOutputXml]
         logging.debug('ARGS: ' + str(args))
         try:
