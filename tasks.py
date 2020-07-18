@@ -23,6 +23,7 @@ def confor_service_3(args):
         elif args['find'] == 'nofind':
             args = ["java", '-jar', pathToConfor, destinationTempXlsx, destinationOutputXml]
         logging.debug('ARGS: ' + str(args))
+        # FIXME: Update with subprocess.run()
         try:
             code = subprocess.call(args, stdout=subprocess.DEVNULL)
             if code == 0:
