@@ -1,9 +1,9 @@
 name: telegram message
-on: [push]
+on: [push, pull_request]
 jobs:
 
   build:
-    name: Build
+    name: push and pull notifications
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -12,4 +12,4 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        args: The ${{ github.event_name }} event triggered.
+        args: The * ${{ github.event_name }} * event triggered.
