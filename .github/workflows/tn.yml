@@ -14,6 +14,6 @@ jobs:
         token: ${{ secrets.TELEGRAM_TOKEN }}
         format: markdown
         message: |
-          * ${{ github.event_name }} * event triggered.
-          Pushed to ${{ github.ref }} by <em>${{ github.event.push.pusher.name }}</em> ⚡️
-          ${{ github.actor }}:${{ github.event.head_commit.message }}
+          ⚡️ * ${{ github.event_name }} * event triggered.
+          Pushed to ${{ github.ref }} by * ${{ github.actor }} *
+          Commit message: ${{ github.actor }}:${{ github.event.head_commit.message }}
