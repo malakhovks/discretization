@@ -1,5 +1,5 @@
 name: telegram message
-on: [push, pull_request]
+on: [push]
 jobs:
 
   build:
@@ -13,4 +13,4 @@ jobs:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         format: markdown
-        message: The * ${{ github.event_name }} * event triggered. Event path --> ${{ github.event.path }}
+        message: The * ${{ github.event_name }} * event triggered. * ${{ github.event.path }} *
