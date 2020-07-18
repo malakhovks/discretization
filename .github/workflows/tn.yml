@@ -15,5 +15,5 @@ jobs:
         format: markdown
         message: |
           * ${{ github.event_name }} * event triggered.
-          The github varable ref: ${{ github.ref }}
-          The github varable commit: ${{ github.sha }}
+          Pushed to ${{ github.ref }} by <em>${{ github.event.push.pusher.name }}</em> ⚡️
+          ${{ github.actor }}:${{ github.event.head_commit.message }}
