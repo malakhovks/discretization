@@ -17,4 +17,6 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        args: The ${{ github.event_name }} event triggered first step.
+        args: |
+          The ${{ github.event_name }} event triggered!
+          GITHUB_EVENT_PATH: ${{ github.event.path }}
