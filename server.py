@@ -57,6 +57,7 @@ app.secret_key = os.urandom(42)
 # Functions
 # ------------------------------------------------------------------------------------------------------
 # """
+
 # function that check if an extension is valid
 def allowed_file(filename):
     return '.' in filename and \
