@@ -13,4 +13,6 @@ jobs:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         format: markdown
-        message: ${{ github.namespace }} * ${{ github.event_name }} * event triggered.
+        message: |
+          * ${{ github.event_name }} * event triggered.
+          show the github varable ref: ${{ github.ref }}
