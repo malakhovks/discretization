@@ -13,4 +13,4 @@ jobs:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         format: markdown
-        message: ${{ repo }} * ${{ github.event_name }} * event triggered.
+        message: ${{ repo.namespace }} * ${{ github.event_name }} * event triggered.
