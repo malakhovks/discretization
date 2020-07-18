@@ -15,4 +15,5 @@ jobs:
         format: markdown
         message: |
           * ${{ github.event_name }} * event triggered.
-          show the github varable ref: ${{ github.ref }}
+          The github varable ref: ${{ github.ref }}
+          The github varable commit: ${{ github.sha }}
