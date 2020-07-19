@@ -4,7 +4,6 @@ import traceback
 import uwsgi
 from uwsgidecorators import spool
 import shutil, os, re, string
-from flask import abort
 
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
@@ -33,7 +32,7 @@ def confor_service_3(args):
                 logging.error("subprocess.call (confor --> output.xml): Error!")
         except OSError as e:
             logging.error(e, exc_info=True)
-            return abort(500)
+            return uwsgi.SPOOL_IGNORE
         if not os.path.exists(destinationTaskResultFolder):
             try:
                 os.makedirs(destinationTaskResultFolder, 0o755)
