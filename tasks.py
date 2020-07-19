@@ -4,6 +4,7 @@ import traceback
 import uwsgi
 from uwsgidecorators import spool
 import shutil, os, re, string
+from flask import abort
 
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
@@ -19,7 +20,7 @@ def confor_service_3(args):
         destinationOutputXml = "/".join([tempfile.mkdtemp(),'output.xml'])
         destinationTaskResultFolder = '/var/tmp/tasks/confor/' + args['spooler_task_name']
         if args['find'] == 'find':
-            args = ["java", '-jar', pathToConfor, destinationTempXlsx, 'Find$',destinationOutputXml]
+            args = ["java", '-jar', pathToConfor, destinationTempXlsx, 'Find$', destinationOutputXml]
         elif args['find'] == 'nofind':
             args = ["java", '-jar', pathToConfor, destinationTempXlsx, destinationOutputXml]
         logging.debug('ARGS: ' + str(args))
