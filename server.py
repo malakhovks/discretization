@@ -101,16 +101,16 @@ def queued_service_3():
     else:
         return jsonify({'file': { 'filename': 'not allowed'}}), 400
 
-@app.route('/api/confor/status')
-def check_find_status():
+@app.route('/api/confor/service/status')
+def check_service_status():
     taskID = request.args.get('id')
     if not os.path.exists('/var/tmp/tasks/confor/' + taskID):
         return jsonify({'task': {'id': taskID, 'status': False}}), 204
     if os.path.exists('/var/tmp/tasks/confor/' + taskID):
         return jsonify({'task': {'id': taskID, 'status': True}}), 200
 
-@app.route('/api/confor/task/output')
-def get_output_xml():
+@app.route('/api/confor/service/output')
+def get_service_output_xml():
     taskID = request.args.get('id')
     if not os.path.exists('/var/tmp/tasks/confor/' + taskID):
         return jsonify({'task': taskID, 'status': False}), 204
