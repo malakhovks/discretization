@@ -12,7 +12,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 @spool
 def confor_service_3(args):
     try:
-        logging.debug('Start task execution')
+        logging.debug('Start SERVICE_3 execution ..................................................')
         projectDir = str(args['project_dir'])
         pathToConfor = os.path.join(projectDir, 'deploy', 'confor', 'Service3.jar')
         destinationTempXlsx = args['destination']
@@ -27,9 +27,9 @@ def confor_service_3(args):
         try:
             code = subprocess.call(args, stdout=subprocess.DEVNULL)
             if code == 0:
-                logging.debug("subprocess.call (confor --> output.xml): Success!")
+                logging.debug("SERVICE_3 --> output.xml: Success!")
             else:
-                logging.error("subprocess.call (confor --> output.xml): Error!")
+                logging.error("SERVICE_3 --> output.xml: Error!")
         except OSError as e:
             logging.error(e, exc_info=True)
             return uwsgi.SPOOL_IGNORE
