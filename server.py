@@ -51,6 +51,7 @@ b'_5#y2L"F4Q8z\n\xec]/'
 # app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.secret_key = os.urandom(42)
 
+app.use_x_sendfile = True
 
 """
 # ------------------------------------------------------------------------------------------------------
@@ -165,7 +166,12 @@ def get_service_output_xml():
 
     try:
         safe_path = safe_join('/var/tmp/tasks/confor/' + taskID, 'output.xml')
-        return send_file(safe_path, conditional=True, mimetype='text/xml')
+        redirect_path = safe_join('/download_file/' + taskID, 'output.xml')
+        response = make_response("")
+        response.headers["X-Accel-Redirect"] = redirect_path
+        response.headers["Content-Type"] = 'text/xml'
+        return response
+        # return send_file(safe_path, conditional=True, mimetype='text/xml')
     except Exception as e:
         logging.error(e, exc_info=True)
         return abort(500)
