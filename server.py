@@ -25,7 +25,7 @@ from flask_cors import CORS
 
 # for spooler
 import uwsgi
-from tasks import confor_service_3
+from tasks import confor_service_3, confor_service_3_4
 
 ALLOWED_EXTENSIONS = set(['xlsx', 'csv'])
 
@@ -71,7 +71,8 @@ def index():
 # API ---------------------------------------------------------------------------------------------------
 # """
 
-@app.route('/api/confor/service3', methods=['POST'])
+# SERVICE 3 --> output
+@app.route('/api/confor/service/3', methods=['POST'])
 def queued_service_3():
     # check if the post request has the file part
     if 'file' not in request.files:
@@ -94,10 +95,43 @@ def queued_service_3():
             destination = "/".join([tempfile.mkdtemp(),xlsxFile])
             file.save(destination)
             file.close()
+            # FIXME: Update toTask with try except
             toTask = confor_service_3.spool(project_dir = projectDir.encode(), filename = xlsxFileName.encode(), find = request.args['find'], destination = destination)
             toTask = toTask.decode('utf-8', errors='ignore')
             toTask = toTask.rpartition('/')[2]
-            return jsonify({'task': { 'status': 'queued', 'parameters': {'find': request.args['find'], 'encoding': 'utf-8', 'extension': 'xlsx'}, 'file': xlsxFileName, 'id': toTask}}), 202
+            return jsonify({'task': { 'status': 'queued', 'service': '3','parameters': {'find': request.args['find'], 'encoding': 'utf-8', 'extension': 'xlsx'}, 'file': xlsxFileName, 'id': toTask}}), 202
+    else:
+        return jsonify({'file': { 'filename': 'not allowed'}}), 400
+
+# SERVICE 3 --> 4 --> output sequentially
+@app.route('/api/confor/service/3/4', methods=['POST'])
+def queued_service_3_4():
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        flash('No file part')
+        return abort(400)
+
+    file = request.files['file']
+
+    # if user does not select file, browser also submit an empty part without filename
+    if file.filename == '':
+        flash('No selected file')
+        return abort(400)
+
+    if file and allowed_file(file.filename):
+        projectDir = os.getcwd()
+        # xlsx processing
+        if file.filename.rsplit('.', 1)[1].lower() == 'xlsx':
+            xlsxFileName = secure_filename(file.filename)
+            xlsxFile = secure_filename(file.filename)
+            destination = "/".join([tempfile.mkdtemp(),xlsxFile])
+            file.save(destination)
+            file.close()
+            # FIXME: Update toTask with try except
+            toTask = confor_service_3_4.spool(project_dir = projectDir.encode(), filename = xlsxFileName.encode(), find = request.args['find'], destination = destination)
+            toTask = toTask.decode('utf-8', errors='ignore')
+            toTask = toTask.rpartition('/')[2]
+            return jsonify({'task': { 'status': 'queued', 'service': '3-4','parameters': {'find': request.args['find'], 'encoding': 'utf-8', 'extension': 'xlsx'}, 'file': xlsxFileName, 'id': toTask}}), 202
     else:
         return jsonify({'file': { 'filename': 'not allowed'}}), 400
 
