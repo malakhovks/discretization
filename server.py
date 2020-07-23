@@ -18,7 +18,7 @@ import re, string
 # from io import StringIO, BytesIO
 
 # load libraries for API proccessing
-from flask import Flask, jsonify, flash, request, Response, redirect, url_for, abort, render_template, send_file, safe_join, after_this_request
+from flask import Flask, jsonify, flash, request, Response, redirect, url_for, abort, render_template, send_file, safe_join, after_this_request, make_response
 
 # A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 from flask_cors import CORS
