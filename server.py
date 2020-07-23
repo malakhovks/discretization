@@ -166,7 +166,7 @@ def get_service_output_xml():
 
     try:
         safe_path = safe_join('/var/tmp/tasks/confor/' + taskID, 'output.xml')
-        redirect_path = safe_join('/download_file/' + taskID, 'output.xml')
+        redirect_path = '/download_file/' + safe_path
         response = make_response("")
         response.headers["X-Accel-Redirect"] = redirect_path
         response.headers["Content-Type"] = 'text/xml'
