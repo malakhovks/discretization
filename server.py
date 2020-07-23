@@ -152,18 +152,19 @@ def get_service_output_xml():
     if not os.path.isfile('/var/tmp/tasks/confor/' + taskID + '/output.xml'):
         return jsonify({'task': taskID, 'status': False}), 204
 
-    @after_this_request
-    def remove_output_xml(response):
-        safe_path = safe_join('/var/tmp/tasks/confor/' + taskID, 'output.xml')
-        try:
-            os.remove(safe_path)
-            if not os.path.isfile(safe_path):
-                shutil.rmtree('/var/tmp/tasks/confor/' + taskID)
-        except Exception as e:
-            logging.error(e, exc_info=True)
-            return abort(500)
-        return response
+    # @after_this_request
+    # def remove_output_xml(response):
+    #     safe_path = safe_join('/var/tmp/tasks/confor/' + taskID, 'output.xml')
+    #     try:
+    #         os.remove(safe_path)
+    #         if not os.path.isfile(safe_path):
+    #             shutil.rmtree('/var/tmp/tasks/confor/' + taskID)
+    #     except Exception as e:
+    #         logging.error(e, exc_info=True)
+    #         return abort(500)
+    #     return response
 
+    # FIXME: Need to delete taskID folders
     try:
         # safe_path = safe_join('/var/tmp/tasks/confor/' + taskID, 'output.xml')
         redirect_path = safe_join('/download_file/' + taskID, 'output.xml')
