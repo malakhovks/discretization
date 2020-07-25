@@ -23,7 +23,7 @@ from flask import Flask, jsonify, flash, request, Response, redirect, url_for, a
 # A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 from flask_cors import CORS
 
-# for spooler
+# for spooler tasks
 import uwsgi
 from tasks import confor_service_3, confor_service_3_4
 
@@ -152,6 +152,7 @@ def get_service_output_xml():
     if not os.path.isfile('/var/tmp/tasks/confor/' + taskID + '/output.xml'):
         return jsonify({'task': taskID, 'status': False}), 204
 
+    # This works in async !!!
     # @after_this_request
     # def remove_output_xml(response):
     #     safe_path = safe_join('/var/tmp/tasks/confor/' + taskID, 'output.xml')
