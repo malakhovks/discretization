@@ -53,11 +53,7 @@ app.secret_key = os.urandom(42)
 
 app.use_x_sendfile = True
 
-"""
-# ------------------------------------------------------------------------------------------------------
-# Functions
-# ------------------------------------------------------------------------------------------------------
-# """
+# ! Functions ------------------------------------------------------------------------------------------
 
 # function that check if an extension is valid
 def allowed_file(filename):
@@ -68,11 +64,9 @@ def allowed_file(filename):
 def index():
     return Response(render_template('index.html'), mimetype='text/html')
 
-"""
-# API ---------------------------------------------------------------------------------------------------
-# """
+# ! API ---------------------------------------------------------------------------------------------------
 
-# SERVICE 3 --> output
+# * SERVICE 3 --> output
 @app.route('/api/confor/service/3', methods=['POST'])
 def queued_service_3():
     # check if the post request has the file part
@@ -104,7 +98,7 @@ def queued_service_3():
     else:
         return jsonify({'file': { 'filename': 'not allowed'}}), 400
 
-# SERVICE 3 --> 4 --> output sequentially
+# * SERVICE 3 --> 4 --> output sequentially
 @app.route('/api/confor/service/3/4', methods=['POST'])
 def queued_service_3_4():
     # check if the post request has the file part

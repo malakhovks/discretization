@@ -1,9 +1,11 @@
 # confor-as-a-service
+
 **CONFOR** – tools for knowledge discovery, classification, diagnostics and prediction.
 
 The **CONFOR** system supports the most effective methods of intelligent data analysis.
 
 The **main functions** of **CONFOR** are:
+
 - revealing the regularities that characterize classes of objects which are represented as sets of attribute values;
 - using the revealed regularities for classification, diagnostics and prediction.
 
