@@ -15,7 +15,10 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 # load libraries for string proccessing
 import re, string
 
-# from io import StringIO, BytesIO
+# for intervals computation
+import pandas as pd
+# load libraries for XML proccessing
+import xml.etree.ElementTree as ET
 
 # load libraries for API proccessing
 from flask import Flask, jsonify, flash, request, Response, redirect, url_for, abort, render_template, send_file, safe_join, after_this_request, make_response
@@ -27,7 +30,7 @@ from flask_cors import CORS
 import uwsgi
 from tasks import confor_service_3, confor_service_3_4
 
-ALLOWED_EXTENSIONS = set(['xlsx', 'csv'])
+ALLOWED_EXTENSIONS = set(['xlsx', 'csv', 'xml'])
 
 __author__ = "Kyrylo Malakhov <malakhovks@nas.gov.ua> and Vitalii Velychko <aduisukr@gmail.com>"
 __copyright__ = "Copyright (C) 2020 Kyrylo Malakhov <malakhovks@nas.gov.ua> and Vitalii Velychko <aduisukr@gmail.com>"
@@ -65,6 +68,48 @@ def index():
     return Response(render_template('index.html'), mimetype='text/html')
 
 # ! API ---------------------------------------------------------------------------------------------------
+
+# * discretization by intervals
+@app.route('/api/confor/discretization', methods=['POST'])
+def discretization_by_intervals():
+    # check if the post request has the file part
+    if 'input-csv' not in request.files:
+        flash('No files')
+        return abort(400)
+    if 'output-xml' not in request.files:
+        flash('No files')
+        return abort(400)
+
+    uploaded_csv = request.files['input-csv']
+    uploaded_xml = request.files['input-xml']
+    destinations_list = []
+
+    # if user does not select file, browser also submit an empty part without filename
+    if uploaded_csv.filename == '':
+        flash('No selected file')
+        return abort(400)
+    # if user does not select file, browser also submit an empty part without filename
+    if uploaded_xml.filename == '':
+        flash('No selected file')
+        return abort(400)
+    if uploaded_csv and allowed_file(uploaded_csv.filename):
+        if uploaded_csv.filename.rsplit('.', 1)[1].lower() == 'csv':
+            csv_filename = secure_filename(uploaded_csv.filename)
+            destination = "/".join([tempfile.mkdtemp(),csv_filename])
+            uploaded_csv.save(destination)
+            destinations_list.append(destination)
+            uploaded_csv.close()
+
+    if uploaded_xml and allowed_file(uploaded_xml.filename):
+        if uploaded_xml.filename.rsplit('.', 1)[1].lower() == 'xml':
+            xml_filename = secure_filename(uploaded_xml.filename)
+            destination = "/".join([tempfile.mkdtemp(),xml_filename])
+            uploaded_xml.save(destination)
+            destinations_list.append(destination)
+            uploaded_xml.close()
+
+    xml_tree = ET.parse(destinations_list[1])
+    xml_root = xml_tree.getroot()
 
 # * SERVICE 3 --> output
 @app.route('/api/confor/service/3', methods=['POST'])
