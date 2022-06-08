@@ -26,7 +26,7 @@ from flask import Flask, jsonify, flash, request, Response, abort, render_templa
 # A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 from flask_cors import CORS
 
-for spooler tasks
+# for spooler tasks
 import uwsgi
 from tasks import confor_service_3, confor_service_3_4
 
