@@ -18,3 +18,9 @@ Pyramidal networks considerably decrease volumes of search operations that makes
 The system forms logical models of object classes which allow to take into account influence on diagnosed or prognosed parameter of separate attributes and their various combinations as well. Besides, it is taken into account influence of "exclusive" attributes, that is such attributes which are incompatible with diagnosed or prognosed value. These properties of models of object classes favour increasing diagnosis and prognosis accuracy.
 
 **CONFOR** is able to discover a regularity however complex it be.
+
+## Розгортання
+
+```$ docker build . -t discr_image```
+
+```docker run --restart always --name ken -d -p 80:80 discr_image```
