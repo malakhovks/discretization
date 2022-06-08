@@ -23,4 +23,4 @@ The system forms logical models of object classes which allow to take into accou
 
 ```$ docker build . -t discr_image```
 
-```docker run --restart always --name ken -d -p 80:80 discr_image```
+```$ docker run --restart always --name ken -d -p 80:80 discr_image```
