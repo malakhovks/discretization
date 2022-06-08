@@ -1,6 +1,6 @@
-# confor-as-a-service
+# Discretization by intervals utility
 
-**CONFOR** – tools for knowledge discovery, classification, diagnostics and prediction.
+A part of **CONFOR** – tools for knowledge discovery, classification, diagnostics and prediction.
 
 The **CONFOR** system supports the most effective methods of intelligent data analysis.
 
