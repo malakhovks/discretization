@@ -1,4 +1,3 @@
-from re import X
 import pandas as pd
 # load libraries for XML proccessing
 import xml.etree.ElementTree as ET

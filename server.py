@@ -6,7 +6,7 @@ import sys, os, tempfile, shutil
 # load misc utils
 import json
 # import uuid
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename, safe_join
 import logging
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.DEBUG)
@@ -21,12 +21,12 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 
 # load libraries for API proccessing
-from flask import Flask, jsonify, flash, request, Response, redirect, url_for, abort, render_template, send_file, safe_join, after_this_request, make_response
+from flask import Flask, jsonify, flash, request, Response, abort, render_template, make_response, send_file
 
 # A Flask extension for handling Cross Origin Resource Sharing (CORS), making cross-origin AJAX possible.
 from flask_cors import CORS
 
-# for spooler tasks
+for spooler tasks
 import uwsgi
 from tasks import confor_service_3, confor_service_3_4
 
@@ -76,13 +76,33 @@ def discretization_by_intervals():
     if 'input-csv' not in request.files:
         flash('No files')
         return abort(400)
-    if 'output-xml' not in request.files:
+    if 'input-xml' not in request.files:
         flash('No files')
         return abort(400)
 
     uploaded_csv = request.files['input-csv']
     uploaded_xml = request.files['input-xml']
     destinations_list = []
+    
+    intervals_petal_length = {
+        'labeled':[],
+        'unlabeled':[]
+    }
+
+    intervals_petal_width = {
+        'labeled':[],
+        'unlabeled':[]
+    }
+
+    intervals_sepal_length = {
+        'labeled':[],
+        'unlabeled':[]
+    }
+
+    intervals_sepal_width = {
+        'labeled':[],
+        'unlabeled':[]
+    }
 
     # if user does not select file, browser also submit an empty part without filename
     if uploaded_csv.filename == '':
@@ -92,6 +112,7 @@ def discretization_by_intervals():
     if uploaded_xml.filename == '':
         flash('No selected file')
         return abort(400)
+
     if uploaded_csv and allowed_file(uploaded_csv.filename):
         if uploaded_csv.filename.rsplit('.', 1)[1].lower() == 'csv':
             csv_filename = secure_filename(uploaded_csv.filename)
@@ -110,6 +131,98 @@ def discretization_by_intervals():
 
     xml_tree = ET.parse(destinations_list[1])
     xml_root = xml_tree.getroot()
+    for attribute in xml_root.findall('Attribute'):
+        name = attribute.find('Name')
+        if name.text == 'petal length':
+            for interval in attribute.findall('Interval'):
+                number = interval.find('Number')
+                min_value = interval.find('Min').text
+                max_value = interval.find('Max').text
+                intervals_petal_length['labeled'].append({number.text:pd.Interval(float(min_value), float(max_value), closed='both')})
+                intervals_petal_length['unlabeled'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
+        if name.text == 'petal width':
+            for interval in attribute.findall('Interval'):
+                number = interval.find('Number')
+                min_value = interval.find('Min').text
+                max_value = interval.find('Max').text
+                intervals_petal_width['labeled'].append({number.text:pd.Interval(float(min_value), float(max_value), closed='both')})
+                intervals_petal_width['unlabeled'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
+        if name.text == 'sepal length':
+            for interval in attribute.findall('Interval'):
+                number = interval.find('Number')
+                min_value = interval.find('Min').text
+                max_value = interval.find('Max').text
+                intervals_sepal_length['labeled'].append({number.text:pd.Interval(float(min_value), float(max_value), closed='both')})
+                intervals_sepal_length['unlabeled'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
+        if name.text == 'sepal width':
+            for interval in attribute.findall('Interval'):
+                number = interval.find('Number')
+                min_value = interval.find('Min').text
+                max_value = interval.find('Max').text
+                intervals_sepal_width['labeled'].append({number.text:pd.Interval(float(min_value), float(max_value), closed='both')})
+                intervals_sepal_width['unlabeled'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
+
+    index_petal_length = pd.IntervalIndex(intervals_petal_length['unlabeled'])
+    index_petal_width = pd.IntervalIndex(intervals_petal_width['unlabeled'])
+    index_sepal_length = pd.IntervalIndex(intervals_sepal_length['unlabeled'])
+    index_sepal_width = pd.IntervalIndex(intervals_sepal_width['unlabeled'])
+
+    data = pd.read_csv(destinations_list[0], sep=';')
+
+    for item_index,item in enumerate(data['petal length']):
+        if isinstance(index_petal_length.get_loc(item), slice):
+            data.loc[item_index, 'petal length'] = int(index_petal_length.get_loc(item).start) + 1
+            print("slice! : " + str(index_petal_length.get_loc(item).start + 1))
+        else:
+            data.loc[item_index, 'petal length'] = index_petal_length.get_loc(item) + 1
+
+    for item_index,item in enumerate(data['petal width']):
+        if isinstance(index_petal_width.get_loc(item), slice):
+            data.loc[item_index, 'petal width'] = int(index_petal_width.get_loc(item).start) + 1
+            print("slice! : " + str(index_petal_width.get_loc(item).start + 1))
+        else:
+            data.loc[item_index, 'petal width'] = index_petal_width.get_loc(item) + 1
+
+    for item_index,item in enumerate(data['sepal length']):
+        if isinstance(index_sepal_length.get_loc(item), slice):
+            data.loc[item_index, 'sepal length'] = int(index_sepal_length.get_loc(item).start) + 1
+            print("slice! : " + str(index_sepal_length.get_loc(item).start + 1))
+        else:
+            data.loc[item_index, 'sepal length'] = index_sepal_length.get_loc(item) + 1
+
+    for item_index,item in enumerate(data['sepal width']):
+        if isinstance(index_sepal_width.get_loc(item), slice):
+            data.loc[item_index, 'sepal width'] = int(index_sepal_width.get_loc(item).start) + 1
+            print("slice! : " + str(index_sepal_width.get_loc(item).start + 1))
+        else:
+            data.loc[item_index, 'sepal length'] = index_sepal_width.get_loc(item) + 1
+
+    data['petal length'] = data['petal length'].astype(int)
+    data['petal width'] = data['petal width'].astype(int)
+    data['sepal length'] = data['sepal length'].astype(int)
+    data['sepal width'] = data['sepal width'].astype(int)
+
+    destination = safe_join(tempfile.mkdtemp(), 'discretization-by-intervals.csv')
+    try:
+        # data.to_csv(destination, index=False, sep=';')
+        return Response(data.to_csv(index=False, sep=';'), mimetype='text/csv')
+        # data.to_csv(destination, index=False, sep=request.args['sep'])
+    except Exception as e:
+        logging.error(e, exc_info=True)
+        return abort(500)
+
+    # try:
+    #     # safe_path = safe_join('/var/tmp/tasks/confor/' + taskID, 'output.xml')
+    #     redirect_path = destination
+    #     if os.path.exists(destination):
+    #         return send_file(destination,
+    #                  mimetype='text/csv',
+    #                  download_name='discretization-by-intervals.csv',
+    #                  as_attachment=True)
+    #     # return send_file(safe_path, conditional=True, mimetype='text/xml')
+    # except Exception as e:
+    #     logging.error(e, exc_info=True)
+    #     return abort(500)
 
 # * SERVICE 3 --> output
 @app.route('/api/confor/service/3', methods=['POST'])
