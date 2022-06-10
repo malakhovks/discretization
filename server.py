@@ -63,6 +63,10 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def is_number_repl_isdigit(s):
+    """ Returns True is string is a number. """
+    return s.replace('.','',1).isdigit()
+
 @app.route('/')
 def index():
     return Response(render_template('index.html'), mimetype='text/html')
@@ -82,27 +86,9 @@ def discretization_by_intervals():
 
     uploaded_csv = request.files['input-csv']
     uploaded_xml = request.files['input-xml']
+
     destinations_list = []
-    
-    intervals_petal_length = {
-        'labeled':[],
-        'unlabeled':[]
-    }
-
-    intervals_petal_width = {
-        'labeled':[],
-        'unlabeled':[]
-    }
-
-    intervals_sepal_length = {
-        'labeled':[],
-        'unlabeled':[]
-    }
-
-    intervals_sepal_width = {
-        'labeled':[],
-        'unlabeled':[]
-    }
+    intervals_dict = {}
 
     # if user does not select file, browser also submit an empty part without filename
     if uploaded_csv.filename == '':
@@ -133,74 +119,48 @@ def discretization_by_intervals():
     xml_root = xml_tree.getroot()
     for attribute in xml_root.findall('Attribute'):
         name = attribute.find('Name')
-        if name.text == 'petal length':
-            for interval in attribute.findall('Interval'):
-                number = interval.find('Number')
-                min_value = interval.find('Min').text
-                max_value = interval.find('Max').text
-                intervals_petal_length['labeled'].append({number.text:pd.Interval(float(min_value), float(max_value), closed='both')})
-                intervals_petal_length['unlabeled'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
-        if name.text == 'petal width':
-            for interval in attribute.findall('Interval'):
-                number = interval.find('Number')
-                min_value = interval.find('Min').text
-                max_value = interval.find('Max').text
-                intervals_petal_width['labeled'].append({number.text:pd.Interval(float(min_value), float(max_value), closed='both')})
-                intervals_petal_width['unlabeled'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
-        if name.text == 'sepal length':
-            for interval in attribute.findall('Interval'):
-                number = interval.find('Number')
-                min_value = interval.find('Min').text
-                max_value = interval.find('Max').text
-                intervals_sepal_length['labeled'].append({number.text:pd.Interval(float(min_value), float(max_value), closed='both')})
-                intervals_sepal_length['unlabeled'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
-        if name.text == 'sepal width':
-            for interval in attribute.findall('Interval'):
-                number = interval.find('Number')
-                min_value = interval.find('Min').text
-                max_value = interval.find('Max').text
-                intervals_sepal_width['labeled'].append({number.text:pd.Interval(float(min_value), float(max_value), closed='both')})
-                intervals_sepal_width['unlabeled'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
+        logging.debug(name.text)
+        intervals_dict.update({name.text: {'intervals': [], 'index': {}}})
 
-    index_petal_length = pd.IntervalIndex(intervals_petal_length['unlabeled'])
-    index_petal_width = pd.IntervalIndex(intervals_petal_width['unlabeled'])
-    index_sepal_length = pd.IntervalIndex(intervals_sepal_length['unlabeled'])
-    index_sepal_width = pd.IntervalIndex(intervals_sepal_width['unlabeled'])
+    logging.debug('INTERVALS EMPTY: ')
+    logging.debug(intervals_dict)
 
-    data = pd.read_csv(destinations_list[0], sep=';')
+    for attribute in xml_root.findall('Attribute'):
+        name = attribute.find('Name')
+        print(name.text)
+        for interval in attribute.findall('Interval'):
+            min_value = interval.find('Min').text
+            max_value = interval.find('Max').text
+            intervals_dict[name.text]['intervals'].append(pd.Interval(float(min_value), float(max_value), closed='both'))
 
-    for item_index,item in enumerate(data['petal length']):
-        if isinstance(index_petal_length.get_loc(item), slice):
-            data.loc[item_index, 'petal length'] = int(index_petal_length.get_loc(item).start) + 1
-            print("slice! : " + str(index_petal_length.get_loc(item).start + 1))
-        else:
-            data.loc[item_index, 'petal length'] = index_petal_length.get_loc(item) + 1
+    logging.debug('INTERVALS INTERVALS: ')
+    logging.debug(intervals_dict)
 
-    for item_index,item in enumerate(data['petal width']):
-        if isinstance(index_petal_width.get_loc(item), slice):
-            data.loc[item_index, 'petal width'] = int(index_petal_width.get_loc(item).start) + 1
-            print("slice! : " + str(index_petal_width.get_loc(item).start + 1))
-        else:
-            data.loc[item_index, 'petal width'] = index_petal_width.get_loc(item) + 1
+    # intervals_dict['sepal length']['index'] = pd.IntervalIndex(intervals_dict['sepal length']['intervals'])
 
-    for item_index,item in enumerate(data['sepal length']):
-        if isinstance(index_sepal_length.get_loc(item), slice):
-            data.loc[item_index, 'sepal length'] = int(index_sepal_length.get_loc(item).start) + 1
-            print("slice! : " + str(index_sepal_length.get_loc(item).start + 1))
-        else:
-            data.loc[item_index, 'sepal length'] = index_sepal_length.get_loc(item) + 1
+    for key, value in intervals_dict.items():
+        value['index'] = pd.IntervalIndex(value['intervals'])
 
-    for item_index,item in enumerate(data['sepal width']):
-        if isinstance(index_sepal_width.get_loc(item), slice):
-            data.loc[item_index, 'sepal width'] = int(index_sepal_width.get_loc(item).start) + 1
-            print("slice! : " + str(index_sepal_width.get_loc(item).start + 1))
-        else:
-            data.loc[item_index, 'sepal length'] = index_sepal_width.get_loc(item) + 1
+    logging.debug('INTERVALS INTERVALS INDEX: ')
+    logging.debug(intervals_dict)
 
-    data['petal length'] = data['petal length'].astype(int)
-    data['petal width'] = data['petal width'].astype(int)
-    data['sepal length'] = data['sepal length'].astype(int)
-    data['sepal width'] = data['sepal width'].astype(int)
+    data = pd.read_csv(destinations_list[0], sep=';', dtype = str)
+
+    columns_names_list = data.columns.values.tolist()
+
+    for col_name in columns_names_list:
+        if col_name not in ['Object', 'Class']:
+            for item_index,item in enumerate(data[col_name]):
+                print(item)
+                print(type(item))
+                if type(item) is not float:
+                    if is_number_repl_isdigit(item):
+                        if isinstance(intervals_dict[col_name]['index'].get_loc(float(item)), slice):
+                            data.loc[item_index, col_name] = int(intervals_dict[col_name]['index'].get_loc(float(item)).start) + 1
+                        else:
+                            data.loc[item_index, col_name] = intervals_dict[col_name]['index'].get_loc(float(item)) + 1
+                else:
+                    data.loc[item_index, col_name] = ''
 
     destination = safe_join(tempfile.mkdtemp(), 'discretization-by-intervals.csv')
     try:
